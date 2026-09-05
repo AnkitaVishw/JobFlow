@@ -6,43 +6,42 @@ import {
   BarChart3,
   Settings,
 } from "lucide-react";
+import { NavLink } from "react-router-dom";
 
 function Sidebar() {
   return (
     <aside className="sidebar">
       <div className="logo">JobFlow</div>
 
-      <nav>
-        <a href="#">
-          <LayoutDashboard size={20} />
-          Dashboard
-        </a>
+      <NavLink to="/">
+        <LayoutDashboard size={20} />
+        Dashboard
+      </NavLink>
 
-        <a href="#">
-          <Briefcase size={20} />
-          Applications
-        </a>
+      <NavLink to="/applications">
+        <Briefcase size={20} />
+        Applications
+      </NavLink>
 
-        <a href="#">
-          <CalendarDays size={20} />
-          Interviews
-        </a>
+      <NavLink to="/interviews">
+        <CalendarDays size={20} />
+        Interviews
+      </NavLink>
 
-        <a href="#">
-          <FileText size={20} />
-          Resumes
-        </a>
+      <NavLink to="/resumes">
+        <FileText size={20} />
+        Resumes
+      </NavLink>
 
-        <a href="#">
-          <BarChart3 size={20} />
-          Analytics
-        </a>
+      <NavLink to="/analytics">
+        <BarChart3 size={20} />
+        Analytics
+      </NavLink>
 
-        <a href="#">
-          <Settings size={20} />
-          Settings
-        </a>
-      </nav>
+      <NavLink to="/settings">
+        <Settings size={20} />
+        Settings
+      </NavLink>
     </aside>
   );
 }
