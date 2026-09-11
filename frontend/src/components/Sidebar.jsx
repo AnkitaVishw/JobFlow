@@ -18,27 +18,52 @@ function Sidebar() {
         Dashboard
       </NavLink>
 
-      <NavLink to="/applications">
+      <NavLink
+        to="/applications"
+        className={({ isActive }) =>
+          isActive ? "nav-link active" : "nav-link"
+        }
+      >
         <Briefcase size={20} />
         Applications
       </NavLink>
 
-      <NavLink to="/interviews">
+      <NavLink
+        to="/interviews"
+        className={({ isActive }) =>
+          isActive ? "nav-link active" : "nav-link"
+        }
+      >
         <CalendarDays size={20} />
         Interviews
       </NavLink>
 
-      <NavLink to="/resumes">
+      <NavLink
+        to="/resumes"
+        className={({ isActive }) =>
+          isActive ? "nav-link active" : "nav-link"
+        }
+      >
         <FileText size={20} />
         Resumes
       </NavLink>
 
-      <NavLink to="/analytics">
+      <NavLink
+        to="/analytics"
+        className={({ isActive }) =>
+          isActive ? "nav-link active" : "nav-link"
+        }
+      >
         <BarChart3 size={20} />
         Analytics
       </NavLink>
 
-      <NavLink to="/settings">
+      <NavLink
+        to="/settings"
+        className={({ isActive }) =>
+          isActive ? "nav-link active" : "nav-link"
+        }
+      >
         <Settings size={20} />
         Settings
       </NavLink>
