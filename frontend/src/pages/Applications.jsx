@@ -1,17 +1,37 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AddApplicationForm from "../components/AddApplicationForm";
+import api from "../services/api";
 
 function Applications() {
   const [applications, setApplications] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const handleAddApplication = (newApplication) => {
-    setApplications((currentApplications) => [
-      ...currentApplications,
-      {
-        ...newApplication,
-        id: Date.now(),
-      },
-    ]);
+  const fetchApplications = async () => {
+    try {
+      const response = await api.get("/applications/");
+      setApplications(response.data);
+    } catch (error) {
+      console.error("Failed to fetch applications:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchApplications();
+  }, []);
+
+  const handleAddApplication = async (newApplication) => {
+    try {
+      const response = await api.post("/applications/", newApplication);
+
+      setApplications((currentApplications) => [
+        response.data,
+        ...currentApplications,
+      ]);
+    } catch (error) {
+      console.error("Failed to add application:", error);
+    }
   };
 
   return (
@@ -33,7 +53,9 @@ function Applications() {
       <div className="applications-list">
         <h2>Your Applications</h2>
 
-        {applications.length === 0 ? (
+        {loading ? (
+          <p className="empty-message">Loading applications...</p>
+        ) : applications.length === 0 ? (
           <p className="empty-message">No applications added yet.</p>
         ) : (
           applications.map((application) => (
@@ -41,9 +63,16 @@ function Applications() {
               <div>
                 <strong>{application.company}</strong>
                 <span>{application.role}</span>
+                <span>{application.location}</span>
               </div>
 
-              <span className="status">{application.status}</span>
+              <span
+                className={`status ${application.status
+                  .toLowerCase()
+                  .replace(" ", "-")}`}
+              >
+                {application.status}
+              </span>
             </div>
           ))
         )}
