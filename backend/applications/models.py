@@ -19,10 +19,6 @@ class JobApplication(models.Model):
         default="Applied",
     )
 
-    salary = models.CharField(max_length=100, blank=True)
-    job_url = models.URLField(blank=True)
-    date_applied = models.DateField(auto_now_add=True)
-    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.company} - {self.role}"
