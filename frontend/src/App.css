@@ -380,3 +380,21 @@ body {
 .status-select:hover {
   opacity: 0.85;
 }
+.application-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.edit-btn {
+  padding: 7px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background: white;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.edit-btn:hover {
+  background: #f3f4f6;
+}

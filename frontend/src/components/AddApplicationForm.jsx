@@ -1,13 +1,36 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-function AddApplicationForm({ onAddApplication }) {
+function AddApplicationForm({
+  onAddApplication,
+  editingApplication,
+  onUpdateApplication,
+}) {
   const [formData, setFormData] = useState({
-    company: "",
-    role: "",
-    location: "",
-    salary: "",
-    jobUrl: "",
+    company: editingApplication?.company || "",
+    role: editingApplication?.role || "",
+    location: editingApplication?.location || "",
+    salary: editingApplication?.salary || "",
+    jobUrl: editingApplication?.job_url || "",
   });
+  useEffect(() => {
+    if (editingApplication) {
+      setFormData({
+        company: editingApplication.company || "",
+        role: editingApplication.role || "",
+        location: editingApplication.location || "",
+        salary: editingApplication.salary || "",
+        jobUrl: editingApplication.job_url || "",
+      });
+    } else {
+      setFormData({
+        company: "",
+        role: "",
+        location: "",
+        salary: "",
+        jobUrl: "",
+      });
+    }
+  }, [editingApplication]);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -21,16 +44,19 @@ function AddApplicationForm({ onAddApplication }) {
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    onAddApplication(formData);
+    if (editingApplication) {
+      onUpdateApplication(editingApplication.id, formData);
+    } else {
+      onAddApplication(formData);
 
-    setFormData({
-      company: "",
-      role: "",
-      location: "",
-      status: "Applied",
-      salary: "",
-      jobUrl: "",
-    });
+      setFormData({
+        company: "",
+        role: "",
+        location: "",
+        salary: "",
+        jobUrl: "",
+      });
+    }
   };
 
   return (
@@ -91,7 +117,7 @@ function AddApplicationForm({ onAddApplication }) {
       </div>
 
       <button type="submit" className="submit-btn">
-        Add Application
+        {editingApplication ? "Save Changes" : "Add Application"}
       </button>
     </form>
   );

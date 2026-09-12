@@ -5,6 +5,29 @@ import api from "../services/api";
 function Applications() {
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [editingApplication, setEditingApplication] = useState(null);
+  const handleEdit = (application) => {
+    setEditingApplication(application);
+  };
+  const handleUpdateApplication = async (id, updatedApplication) => {
+    try {
+      const response = await api.patch(
+        `/applications/${id}/`,
+        updatedApplication,
+      );
+
+      setApplications((currentApplications) =>
+        currentApplications.map((application) =>
+          application.id === id ? response.data : application,
+        ),
+      );
+
+      setEditingApplication(null);
+    } catch (error) {
+      console.error("Failed to update application:", error);
+      console.error("Django response:", error.response?.data);
+    }
+  };
 
   const fetchApplications = async () => {
     try {
@@ -69,7 +92,11 @@ function Applications() {
         <h2>Add New Application</h2>
         <p>Enter the details of the job you're applying for.</p>
 
-        <AddApplicationForm onAddApplication={handleAddApplication} />
+        <AddApplicationForm
+          onAddApplication={handleAddApplication}
+          editingApplication={editingApplication}
+          onUpdateApplication={handleUpdateApplication}
+        />
       </div>
 
       <div className="applications-list">
@@ -104,6 +131,12 @@ function Applications() {
                 <option value="Offer">Offer</option>
                 <option value="Rejected">Rejected</option>
               </select>
+              <button
+                className="edit-btn"
+                onClick={() => handleEdit(application)}
+              >
+                Edit
+              </button>
             </div>
           ))
         )}
