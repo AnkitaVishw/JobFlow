@@ -5,7 +5,6 @@ function AddApplicationForm({ onAddApplication }) {
     company: "",
     role: "",
     location: "",
-    status: "Applied",
     salary: "",
     jobUrl: "",
   });
@@ -67,19 +66,6 @@ function AddApplicationForm({ onAddApplication }) {
           onChange={handleChange}
           placeholder="e.g. Bengaluru"
         />
-      </div>
-
-      <div className="form-group">
-        <label>Status</label>
-
-        <select name="status" value={formData.status} onChange={handleChange}>
-          <option value="Applied">Applied</option>
-          <option value="Screening">Screening</option>
-          <option value="Interview">Interview</option>
-          <option value="Technical Round">Technical Round</option>
-          <option value="Offer">Offer</option>
-          <option value="Rejected">Rejected</option>
-        </select>
       </div>
 
       <div className="form-group">

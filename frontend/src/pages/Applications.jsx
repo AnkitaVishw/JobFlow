@@ -33,6 +33,28 @@ function Applications() {
       console.error("Failed to add application:", error);
     }
   };
+  const handleStatusChange = async (id, newStatus) => {
+    try {
+      const response = await api.patch(`/applications/${id}/`, {
+        status: newStatus,
+      });
+
+      console.log("Status updated:", response.data);
+
+      setApplications((currentApplications) =>
+        currentApplications
+          .map((application) =>
+            application.id === id
+              ? { ...application, status: newStatus }
+              : application,
+          )
+          .filter((application) => application.status !== "Rejected"),
+      );
+    } catch (error) {
+      console.error("Status update failed:", error);
+      console.error("Django response:", error.response?.data);
+    }
+  };
 
   return (
     <div className="applications-page">
@@ -66,13 +88,22 @@ function Applications() {
                 <span>{application.location}</span>
               </div>
 
-              <span
-                className={`status ${application.status
+              <select
+                value={application.status}
+                onChange={(event) =>
+                  handleStatusChange(application.id, event.target.value)
+                }
+                className={`status-select ${application.status
                   .toLowerCase()
                   .replace(" ", "-")}`}
               >
-                {application.status}
-              </span>
+                <option value="Applied">Applied</option>
+                <option value="Screening">Screening</option>
+                <option value="Interview">Interview</option>
+                <option value="Technical Round">Technical Round</option>
+                <option value="Offer">Offer</option>
+                <option value="Rejected">Rejected</option>
+              </select>
             </div>
           ))
         )}

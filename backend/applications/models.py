@@ -5,9 +5,9 @@ class JobApplication(models.Model):
         ("Applied", "Applied"),
         ("Screening", "Screening"),
         ("Interview", "Interview"),
-        ("Tchnical Round", "Technical Round"),
+        ("Technical Round", "Technical Round"),
+        ("Offer", "Offer"),
         ("Rejected", "Rejected"),
-     
     ]
 
     company = models.CharField(max_length=200)
