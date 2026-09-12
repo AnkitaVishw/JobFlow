@@ -336,3 +336,47 @@ body {
   color: #6b7280;
   font-size: 14px;
 }
+.status-select {
+  padding: 6px 10px;
+  border: none;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  outline: none;
+  background-color: #f3f4f6;
+}
+
+.status-select.applied {
+  background-color: #e0f2fe;
+  color: #0369a1;
+}
+
+.status-select.screening {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+.status-select.interview {
+  background-color: #ede9fe;
+  color: #6d28d9;
+}
+
+.status-select.technical-round {
+  background-color: #dbeafe;
+  color: #1d4ed8;
+}
+
+.status-select.offer {
+  background-color: #dcfce7;
+  color: #15803d;
+}
+
+.status-select.rejected {
+  background-color: #fee2e2;
+  color: #b91c1c;
+}
+
+.status-select:hover {
+  opacity: 0.85;
+}
