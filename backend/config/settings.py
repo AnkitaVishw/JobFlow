@@ -26,6 +26,16 @@ def env_list(name, default=""):
     return [item.strip() for item in raw.split(",") if item.strip()]
 
 
+def env_origins(name, default=""):
+    origins = []
+    for item in env_list(name, default):
+        if item.startswith("http://") or item.startswith("https://"):
+            origins.append(item.rstrip("/"))
+        else:
+            origins.append(f"https://{item.rstrip('/')}")
+    return origins
+
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.1/howto/deployment/checklist/
 
@@ -99,10 +109,11 @@ DATABASES = {
 }
 
 if os.environ.get("DATABASE_URL"):
-    DATABASES["default"] = dj_database_url.config(
-        conn_max_age=600,
-        ssl_require=not DEBUG,
-    )
+    DATABASES["default"] = dj_database_url.config(conn_max_age=600)
+
+render_host = os.environ.get("RENDER_EXTERNAL_HOSTNAME")
+if render_host and render_host not in ALLOWED_HOSTS:
+    ALLOWED_HOSTS.append(render_host)
 
 
 # Password validation
@@ -146,7 +157,7 @@ STORAGES = {
         "BACKEND": "django.core.files.storage.FileSystemStorage",
     },
     "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
     },
 }
 MEDIA_URL = "/media/"
@@ -179,7 +190,7 @@ CORS_ALLOWED_ORIGINS = [
 if FRONTEND_URL.startswith("http") and FRONTEND_URL not in CORS_ALLOWED_ORIGINS:
     CORS_ALLOWED_ORIGINS.append(FRONTEND_URL.rstrip("/"))
 CORS_ALLOWED_ORIGIN_REGEXES = [r"^https://.*\.onrender\.com$"]
-CSRF_TRUSTED_ORIGINS = env_list(
+CSRF_TRUSTED_ORIGINS = env_origins(
     "CSRF_TRUSTED_ORIGINS",
     "http://localhost:5173,http://127.0.0.1:5173",
 )
