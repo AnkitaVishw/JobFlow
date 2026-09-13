@@ -159,6 +159,8 @@ MEDIA_ROOT = BASE_DIR / "media"
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 DEFAULT_FROM_EMAIL = "JobFlow <noreply@jobflow.local>"
 FRONTEND_URL = os.environ.get("FRONTEND_URL", "http://localhost:5173")
+if FRONTEND_URL and not FRONTEND_URL.startswith("http"):
+    FRONTEND_URL = f"https://{FRONTEND_URL}"
 
 MAILERS = {
     "default": {
@@ -174,10 +176,15 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:5175",
     *env_list("CORS_ALLOWED_ORIGINS"),
 ]
+if FRONTEND_URL.startswith("http") and FRONTEND_URL not in CORS_ALLOWED_ORIGINS:
+    CORS_ALLOWED_ORIGINS.append(FRONTEND_URL.rstrip("/"))
+CORS_ALLOWED_ORIGIN_REGEXES = [r"^https://.*\.onrender\.com$"]
 CSRF_TRUSTED_ORIGINS = env_list(
     "CSRF_TRUSTED_ORIGINS",
     "http://localhost:5173,http://127.0.0.1:5173",
 )
+if FRONTEND_URL.startswith("https://") and FRONTEND_URL not in CSRF_TRUSTED_ORIGINS:
+    CSRF_TRUSTED_ORIGINS.append(FRONTEND_URL.rstrip("/"))
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"

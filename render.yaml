@@ -1,0 +1,54 @@
+databases:
+  - name: jobflow-db
+    plan: free
+
+services:
+  - type: web
+    name: jobflow-api
+    runtime: python
+    plan: free
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate
+    startCommand: gunicorn config.wsgi:application --bind 0.0.0.0:$PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.12.8"
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: "False"
+      - key: ALLOWED_HOSTS
+        value: ".onrender.com"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: jobflow-db
+          property: connectionString
+      - key: FRONTEND_URL
+        fromService:
+          name: jobflow-ui
+          type: web
+          envVarKey: RENDER_EXTERNAL_URL
+      - key: CSRF_TRUSTED_ORIGINS
+        fromService:
+          name: jobflow-ui
+          type: web
+          envVarKey: RENDER_EXTERNAL_URL
+
+  - type: web
+    name: jobflow-ui
+    runtime: static
+    rootDir: frontend
+    buildCommand: VITE_API_URL="${API_ORIGIN}/api" npm run build
+    staticPublishPath: dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: API_ORIGIN
+        fromService:
+          name: jobflow-api
+          type: web
+          envVarKey: RENDER_EXTERNAL_URL
+      - key: NODE_VERSION
+        value: "22"
