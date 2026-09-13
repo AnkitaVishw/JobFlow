@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/6.1/ref/settings/
 
 import os
 from pathlib import Path
+from urllib.parse import parse_qsl, quote, urlencode, urlparse, urlunparse
 
 import dj_database_url
 from dotenv import load_dotenv
@@ -98,6 +99,25 @@ TEMPLATES = [
 WSGI_APPLICATION = 'config.wsgi.application'
 
 
+def public_database_url(url):
+    parsed = urlparse(url)
+    host = parsed.hostname or ""
+    if not (host.startswith("dpg-") and "." not in host):
+        return url
+
+    region = os.environ.get("RENDER_POSTGRES_REGION", "oregon")
+    new_host = f"{host}.{region}-postgres.render.com"
+    auth = ""
+    if parsed.username is not None:
+        auth = f"{quote(parsed.username, safe='')}:{quote(parsed.password or '', safe='')}@"
+    netloc = f"{auth}{new_host}"
+    if parsed.port:
+        netloc = f"{auth}{new_host}:{parsed.port}"
+    query = dict(parse_qsl(parsed.query, keep_blank_values=True))
+    query.setdefault("sslmode", "require")
+    return urlunparse(parsed._replace(netloc=netloc, query=urlencode(query)))
+
+
 # Database
 # https://docs.djangoproject.com/en/6.1/ref/settings/#databases
 
@@ -108,8 +128,12 @@ DATABASES = {
     }
 }
 
-if os.environ.get("DATABASE_URL"):
-    DATABASES["default"] = dj_database_url.config(conn_max_age=600)
+database_url = os.environ.get("DATABASE_URL")
+if database_url:
+    DATABASES["default"] = dj_database_url.parse(
+        public_database_url(database_url),
+        conn_max_age=600,
+    )
 
 render_host = os.environ.get("RENDER_EXTERNAL_HOSTNAME")
 if render_host and render_host not in ALLOWED_HOSTS:
